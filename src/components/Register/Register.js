@@ -23,7 +23,6 @@ class Register extends Component {
      }
 
      onSubmit = event => {
-          console.log(this.state)
           fetch("http://localhost:3000/register",{
                method: 'post',
                headers:{'content-type' : 'application/json'},
@@ -34,17 +33,19 @@ class Register extends Component {
                })
           }).then(res => res.json())
           .then(user =>{
-               this.props.loadUser(user)
-               if (user)this.props.onRouteChange('home')
+               if (user.id){
+                    this.props.loadUser(user)
+                    this.props.onRouteChange('home')
+               }
+               
           })
      }
 
      render(){
-     const { onRouteChange } = this.props
      return (
                <article className="br3 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-6 center">
                <main className="pa4 black-80">
-                    <htmlForm className="measure">
+                    <div className="measure">
                          <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                               <legend className="f1 fw6 ph0 mh0 center"> Register</legend>
                               <div className="mt3">
@@ -63,7 +64,7 @@ class Register extends Component {
                          <div className="">
                               <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Register" onClick={this.onSubmit} />
                          </div>
-                    </htmlForm>
+                    </div>
                </main>
                </article>
          

@@ -26,10 +26,9 @@ class SignIn extends Component {
                     password: this.state.password
                })
           }).then(res => res.json())
-               .then(data => {
-                    console.log(data)
-                    if (data.message === "success") {
-                         this.props.loadUser(data.user)
+               .then(user => {
+                    if (user.id) {
+                         this.props.loadUser(user)
                          this.props.onRouteChange('home')
                     }
                })
@@ -40,7 +39,7 @@ class SignIn extends Component {
           return (
                <article className="br3 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-6 center">
                     <main className="pa4 black-80">
-                         <htmlForm className="measure">
+                         <div className="measure">
                               <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                                    <legend className="f1 fw6 ph0 mh0 center">Sign In</legend>
                                    <div className="mt3">
@@ -58,7 +57,7 @@ class SignIn extends Component {
                               <div className="lh-copy mt3">
                                    <p onClick={() => onRouteChange('register')} href="#0" className="pointer f6 link dim black db">Register</p>
                               </div>
-                         </htmlForm>
+                         </div>
                     </main>
                </article>
           )
