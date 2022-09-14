@@ -41,13 +41,13 @@ class App extends Component {
       bottomRow: height - (clarifyData.bottom_row * height)
     }
   }
-  loadUser = (user) => {
+  loadUser = (userData) => {
     this.setState({user :{
-      id: user.id,
-      "name": user.name,
-      "email": user.email,
-      "entries": user.entries,
-      "joined": user.joined
+      id: userData.id,
+      "name": userData.name,
+      "email": userData.email,
+      "entries": userData.entries,
+      "joined": userData.joined
     }})
   }
 
