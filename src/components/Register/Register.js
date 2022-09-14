@@ -23,7 +23,7 @@ class Register extends Component {
      }
 
      onSubmit = event => {
-          fetch("http://localhost:3000/register",{
+          fetch("https://face-recognition-api-three.vercel.app/register",{
                method: 'post',
                headers:{'content-type' : 'application/json'},
                body: JSON.stringify({
