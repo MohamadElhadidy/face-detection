@@ -13,7 +13,7 @@ import { loadFull } from "tsparticles";
 const initialState = {
   input: '',
   imageUrl: '',
-  box: {},
+  boxes: [],
   route: 'signin',
   isSignedIn: false,
   user: {
@@ -32,16 +32,20 @@ class App extends Component {
   }
   
   calculateFaceLocation = (response) => {
-    const clarifyData = response.outputs[0].data.regions[0].region_info.bounding_box;
+    const clarifyData = response.outputs[0].data.regions;;
     const image = document.getElementById('imageInput');
     const width = Number(image.width)
     const height = Number(image.height)
-    return {
-      leftCol: clarifyData.left_col * width,
-      topRow: clarifyData.top_row * height,
-      rightCol: width - (clarifyData.right_col * width),
-      bottomRow: height - (clarifyData.bottom_row * height)
-    }
+    const boxes = clarifyData.map((data)=>{
+      return {
+        leftCol: data.region_info.bounding_box.left_col * width,
+        topRow: data.region_info.bounding_box.top_row * height,
+        rightCol: width - (data.region_info.bounding_box.right_col * width),
+        bottomRow: height - (data.region_info.bounding_box.bottom_row * height)
+       
+      }
+    }) 
+    return boxes
   }
   loadUser = (userData) => {
     this.setState({user :{
@@ -53,8 +57,8 @@ class App extends Component {
     }})
   }
 
-  displayFaceBox = (box) => {
-    this.setState({ box: box })
+  displayFaceBox = (boxes) => {
+    this.setState({ boxes: boxes })
     }
     
   onInputChange = (event) => {
@@ -94,7 +98,7 @@ class App extends Component {
     }
 
   render() {
-    const { isSignedIn, imageUrl, box, route, user } = this.state
+    const { isSignedIn, imageUrl, boxes, route, user } = this.state
     const ParticlesOptions =
     {
       fps_limit: 30,
@@ -173,31 +177,21 @@ class App extends Component {
       retina_detect: true
     };
     const particlesInit = async (engine) => {
-      console.log(engine);
-      // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
-      // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-      // starting from v2 you can add only the features you need reducing the bundle size
       await loadFull(engine);
     };
 
-    const particlesLoaded = async (container) => {
-      await console.log(container);
-    };
-
-   
     return (
       <div className="App">
         <Particles
           className='particles'
           id="tsparticles"
           init={particlesInit}
-          loaded={particlesLoaded} 
           options={ParticlesOptions} />
         <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn} />
         { route === 'home' ?
         <><Logo /><Rank  user={user}/><ImageLinkForm
             onInputChange={this.onInputChange}
-            onSubmit={this.onSubmit} /><FaceRecognition box={box} imageUrl={imageUrl} /></>
+            onSubmit={this.onSubmit} /><FaceRecognition boxes={boxes} imageUrl={imageUrl} /></>
           :
           (route === 'signin' ? 
             <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
