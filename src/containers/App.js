@@ -5,7 +5,7 @@ import Logo from '../components/Logo/Logo';
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm';
 import Rank from '../components/Rank/Rank';
 import FaceRecognition from '../components/FaceRecognition/FaceRecognition';
-import SignIn from '../components/SignIn/SignIn';
+import Login from '../components/Login/Login';
 import Register from '../components/Register/Register';
 import Particles from "react-particles";
 import { loadFull } from "tsparticles";
@@ -14,7 +14,7 @@ const initialState = {
   input: '',
   imageUrl: '',
   boxes: [],
-  route: 'signin',
+  route: 'login',
   isSignedIn: false,
   user: {
     id: "",
@@ -32,6 +32,7 @@ class App extends Component {
   }
   
   calculateFaceLocation = (response) => {
+    console.log();
     const clarifyData = response.outputs[0].data.regions;;
     const image = document.getElementById('imageInput');
     const width = Number(image.width)
@@ -193,8 +194,8 @@ class App extends Component {
             onInputChange={this.onInputChange}
             onSubmit={this.onSubmit} /><FaceRecognition boxes={boxes} imageUrl={imageUrl} /></>
           :
-          (route === 'signin' ? 
-            <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
+          (route === 'login' ? 
+            <Login onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
             : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />)
         }
         </div>
