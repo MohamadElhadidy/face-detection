@@ -37,7 +37,7 @@ class Login extends Component {
           }
 
           this.setState({ loading: true });
-          fetch("https://face-recognition-api-three.vercel.app/signin", {
+          fetch(`${this.props.host}/signin`, {
                method: 'post',
                headers: { 'content-type': 'application/json' },
                body: JSON.stringify({

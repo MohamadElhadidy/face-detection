@@ -43,7 +43,7 @@ class Register extends Component {
           }
           this.setState({ loading  : true});
 
-          fetch("https://face-recognition-api-three.vercel.app/register",{
+          fetch(`${this.props.host}/register`,{
                method: 'post',
                headers:{'content-type' : 'application/json'},
                body: JSON.stringify({

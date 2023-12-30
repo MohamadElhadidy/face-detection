@@ -24,6 +24,8 @@ const initialState = {
     "joined": '',
   }
 }
+const production = true;
+const host = production ? 'https://face-recognition-api-three.vercel.app' : 'http://localhost:3000';
 
 class App extends Component {
   constructor() {
@@ -32,7 +34,7 @@ class App extends Component {
   }
   
   calculateFaceLocation = (response) => {
-    console.log();
+   
     const clarifyData = response.outputs[0].data.regions;;
     const image = document.getElementById('imageInput');
     const width = Number(image.width)
@@ -75,7 +77,7 @@ class App extends Component {
   }
   onSubmit = () => {
     this.setState({ imageUrl: this.state.input })
-    fetch("https://face-recognition-api-three.vercel.app/imageURL", {
+    fetch(`${host}/imageURL`, {
       method: 'post',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -83,7 +85,7 @@ class App extends Component {
       })
     }).then(res => res.json())
       .then(outputs => {
-        fetch("https://face-recognition-api-three.vercel.app/image", {
+        fetch(`${host}/image`, {
           method: 'put',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
@@ -188,15 +190,15 @@ class App extends Component {
           id="tsparticles"
           init={particlesInit}
           options={ParticlesOptions} />
-        <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn} />
+        <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn} className=' z-2' />
         { route === 'home' ?
-        <><Logo /><Rank  user={user}/><ImageLinkForm
+          <div className="flex justify-center items-center flex-col z-2"><Logo /><Rank user={user} /><ImageLinkForm 
             onInputChange={this.onInputChange}
-            onSubmit={this.onSubmit} /><FaceRecognition boxes={boxes} imageUrl={imageUrl} /></>
+            onSubmit={this.onSubmit} /><FaceRecognition boxes={boxes} imageUrl={imageUrl}  /></div>
           :
           (route === 'login' ? 
-            <Login onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
-            : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />)
+            <Login onRouteChange={this.onRouteChange} loadUser={this.loadUser} host={host} />
+            : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} host={host} />)
         }
         </div>
     );
