@@ -182,9 +182,9 @@ class App extends Component {
     };
 
     return (
-      <div className="App">
+      <div className="App flex justify-center items-center h-screen  w-100">
         <Particles
-          className='particles'
+          className='particles z-1'
           id="tsparticles"
           init={particlesInit}
           options={ParticlesOptions} />
