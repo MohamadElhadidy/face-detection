@@ -14,6 +14,7 @@ const initialState = {
   input: '',
   imageUrl: '',
   boxes: [],
+  loading: false,
   route: 'login',
   isSignedIn: false,
   user: {
@@ -32,51 +33,55 @@ class App extends Component {
     super()
     this.state = initialState
   }
-  
+
   calculateFaceLocation = (response) => {
-   
+
     const clarifyData = response.outputs[0].data.regions;;
     const image = document.getElementById('imageInput');
     const width = Number(image.width)
     const height = Number(image.height)
-    const boxes = clarifyData.map((data)=>{
+    const boxes = clarifyData.map((data) => {
       return {
         leftCol: data.region_info.bounding_box.left_col * width,
         topRow: data.region_info.bounding_box.top_row * height,
         rightCol: width - (data.region_info.bounding_box.right_col * width),
         bottomRow: height - (data.region_info.bounding_box.bottom_row * height)
-       
+
       }
-    }) 
+    })
     return boxes
   }
   loadUser = (userData) => {
-    this.setState({user :{
-      id: userData.id,
-      "name": userData.name,
-      "email": userData.email,
-      "entries": userData.entries,
-      "joined": userData.joined
-    }})
+    this.setState({
+      user: {
+        id: userData.id,
+        "name": userData.name,
+        "email": userData.email,
+        "entries": userData.entries,
+        "joined": userData.joined,
+      }
+    })
   }
 
   displayFaceBox = (boxes) => {
     this.setState({ boxes: boxes })
-    }
-    
+    this.setState({ loading: false })
+  }
+
   onInputChange = (event) => {
     this.setState({ input: event.target.value })
   }
-  onRouteChange = (route)=>{
-    if(route === 'home'){
+  onRouteChange = (route) => {
+    if (route === 'home') {
       this.setState({ isSignedIn: true })
-    }else{
+    } else {
       this.setState(initialState)
     }
     this.setState({ route: route })
   }
   onSubmit = () => {
     this.setState({ imageUrl: this.state.input })
+    this.setState({ loading: true })
     fetch(`${host}/imageURL`, {
       method: 'post',
       headers: { 'content-type': 'application/json' },
@@ -96,9 +101,10 @@ class App extends Component {
             this.setState(Object.assign(this.state.user, { entries: count }))
           }).catch(console.log)
         this.displayFaceBox(this.calculateFaceLocation(outputs))
+        
       })
       .catch(console.log)
-    }
+  }
 
   render() {
     const { isSignedIn, imageUrl, boxes, route, user } = this.state
@@ -190,17 +196,22 @@ class App extends Component {
           id="tsparticles"
           init={particlesInit}
           options={ParticlesOptions} />
-        <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn} className=' z-2' />
-        { route === 'home' ?
-          <div className="flex justify-center items-center flex-col z-2"><Logo /><Rank user={user} /><ImageLinkForm 
-            onInputChange={this.onInputChange}
-            onSubmit={this.onSubmit} /><FaceRecognition boxes={boxes} imageUrl={imageUrl}  /></div>
+        {route === 'home' ?
+          <div className="flex   flex-col z-2">
+            <div className="flex justify-center items-center">
+              <Logo />
+              {/* <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn} /> */}
+          </div>
+            
+            <Rank user={user} /><ImageLinkForm
+              onInputChange={this.onInputChange} loading={this.state.loading}
+              onSubmit={this.onSubmit} /><FaceRecognition boxes={boxes} imageUrl={imageUrl} /></div>
           :
-          (route === 'login' ? 
+          (route === 'login' ?
             <Login onRouteChange={this.onRouteChange} loadUser={this.loadUser} host={host} />
             : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} host={host} />)
         }
-        </div>
+      </div>
     );
   }
 }
